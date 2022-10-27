@@ -5,13 +5,6 @@ that were used during competition.
 
 Python version: any new-ish Python 3.8+ should work, we used 3.10.4
 
-## Generic preprocessing (needs to be run only once)
-
-```
-pip install -r requirements.txt
-bash preprocess_all.sh melbourne
-```
-
 ## Quickstart
 To only generate a submission from a trained model, run:
 
@@ -21,6 +14,13 @@ python core_generate_submission.py -c melbourne -p model_path -m model_name
 ```
 
 this will create a submission in `data_dir` defined in `conf.py` (more specifically, `data_dir / "submissions" / model_name / city_name / "labels" / "cc_labels_test.parquet"`)
+
+## Generic preprocessing (needs to be run only once)
+
+```
+pip install -r requirements.txt
+bash preprocess_all.sh melbourne
+```
 
 ## Core
 Preprocessing: 
