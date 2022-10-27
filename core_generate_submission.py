@@ -1,17 +1,14 @@
-import random
-import re
 import argparse
 import time
-import pandas as pd
-from tqdm import tqdm
-import pickle
-import numpy as np
-import lightgbm as lgb
-from sklearn.neighbors import KDTree, BallTree
-from pathlib import Path
 
-from utils import create_nodes_with_counters, merge_pcas, load_edges
+import lightgbm as lgb
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KDTree
+from tqdm import tqdm
+
 from conf import data_dir
+from utils import create_nodes_with_counters, merge_pcas, load_edges
 
 NEIGHBORS_FOR_WEIGHTING = 10
 
@@ -32,10 +29,12 @@ def create_categorical_features(data):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--city_name", "-c", required=True)
-    parser.add_argument("--model_path", "-m", required=True)
+    parser.add_argument("--model_path", "-p", required=True)
+    parser.add_argument("--model_name", "-m", required=True)
     args = parser.parse_args()
     city_name = args.city_name
     model_path = args.model_path
+    model_name = args.model_name
 
     gbm = lgb.Booster(model_file=model_path)
 
@@ -70,6 +69,7 @@ if __name__ == "__main__":
 
     full_test = pd.concat(full_test)
 
+    traffic_path = data_dir / "traffic"
     volume_agg_test = pd.read_parquet(traffic_path / city_name / f"volume_agg_test.parquet")
     full_test = full_test.merge(volume_agg_test, on=["test_idx"])
     full_test = merge_pcas(city_name, full_test, mode="test")

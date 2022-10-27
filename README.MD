@@ -12,6 +12,16 @@ pip install -r requirements.txt
 bash preprocess_all.sh melbourne
 ```
 
+## Quickstart
+To only generate a submission from a trained model, run:
+
+```
+pip install -r requirements.txt
+python core_generate_submission.py -c melbourne -p model_path -m model_name
+```
+
+this will create a submission in `data_dir` defined in `conf.py` (more specifically, `data_dir / "submissions" / model_name / city_name / "labels" / "cc_labels_test.parquet"`)
+
 ## Core
 Preprocessing: 
 Run the notebook `core_create_target_encodings.ipynb`
@@ -19,8 +29,7 @@ Run the notebook `core_create_target_encodings.ipynb`
 Now you're ready to run the notebook `core_final.ipynb`! Note that it raises an intentional error after training and
 before creating submissions, but can be resumed manually after choosing the desired number of iterations to use.
 
-To only generate a submission from a trained model, run `python core_generate_submission.py -c melbourne -m model_path`, this will create
-a submission in the `data_dir` defined in `conf.py`
+
 
 ## Extended
 
