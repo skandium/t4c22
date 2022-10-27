@@ -13,6 +13,7 @@ from pathlib import Path
 from utils import create_nodes_with_counters, merge_pcas, load_edges
 from conf import data_dir
 
+NEIGHBORS_FOR_WEIGHTING = 10
 
 def create_categorical_features(data):
     feats = ["oneway", "highway", "tunnel"]
