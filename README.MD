@@ -3,6 +3,8 @@
 This should roughly replicate the solution of the Bolt team. Code is (slightly) refactored compared to the messy notebooks
 that were used during competition.
 
+Python version: any new-ish Python 3.8+ should work, we used 3.10.4
+
 ## Generic preprocessing (needs to be run only once)
 
 ```
@@ -11,13 +13,20 @@ bash preprocess_all.sh melbourne
 ```
 
 ## Core
-
+Preprocessing: 
 Run the notebook `core_create_target_encodings.ipynb`
+
 Now you're ready to run the notebook `core_final.ipynb`! Note that it raises an intentional error after training and
 before creating submissions, but can be resumed manually after choosing the desired number of iterations to use.
+
+To only generate a submission from a trained model, run `python core_generate_submission.py -c melbourne -m model_path`, this will create
+a submission in the `data_dir` defined in `conf.py`
 
 ## Extended
 
 
 ## Artifacts
-We store the trained model artifacts together with submission parquet files in S3.
+We store the trained model artifacts together with submission parquet files in S3:
+
+- core [submissions](https://t4c22-data.s3.eu-central-1.amazonaws.com/submissions/core.zip),
+- core [models](https://t4c22-data.s3.eu-central-1.amazonaws.com/models/core.zip)
