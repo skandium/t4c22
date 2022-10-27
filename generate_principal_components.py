@@ -82,10 +82,15 @@ if __name__ == "__main__":
     traffic_path.mkdir(parents=True, exist_ok=True)
 
     counters_train = load_preprocessed_counters(city_name, "train")
+    volume_feats = [c for c in counters_train.columns if c.startswith("volumes")]
+    volume_agg_train = counters_train.groupby(["day", "t"])[volume_feats].median().reset_index()
+    volume_agg_train.to_parquet(traffic_path / city_name / f"volume_agg_train.parquet")
     counters_train["test_idx"] = -1
 
     print(counters_train.shape)
     counters_test = load_preprocessed_counters(city_name, "test")
+    volume_agg_test = counters_test.groupby(["test_idx"])[volume_feats].median().reset_index()
+    volume_agg_test.to_parquet(traffic_path / city_name / f"volume_agg_test.parquet")
     counters_test["day"] = "2050-01-01"
     counters_test["t"] = counters_test["test_idx"]
     print(counters_test.shape)
