@@ -34,7 +34,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_path", "-m", required=True)
     args = parser.parse_args()
     city_name = args.city_name
-    model_path = args.feature
+    model_path = args.model_path
 
     gbm = lgb.Booster(model_file=model_path)
 
