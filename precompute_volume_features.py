@@ -4,7 +4,6 @@ import numpy as np
 from conf import data_dir
 
 
-
 # Feature engineering on top of counter series
 def gr(vals):
     return (vals[-1] / (vals[0] + 0.01))
@@ -47,9 +46,9 @@ if __name__ == "__main__":
     counters = load_counters(city_name, "train")
     counters = calculate_volume_features(counters, aggregators=engineered_volume_features, nan_to_zero=True)
     del counters["volumes_1h"]
-    counters.to_parquet(data_dir / "train" / city_name / "input" / f"all_counters.parquet")
+    counters.to_parquet(data_dir / "traffic" / city_name / "all_counters_train.parquet")
 
     counters = load_counters(city_name, "test")
     counters = calculate_volume_features(counters, aggregators=engineered_volume_features, nan_to_zero=True)
     del counters["volumes_1h"]
-    counters.to_parquet(data_dir / "test" / city_name / "input" / f"all_counters.parquet")
+    counters.to_parquet(data_dir / "traffic" / city_name / "all_counters_test.parquet")

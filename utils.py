@@ -42,7 +42,7 @@ def load_counters(city_name, mode):
 
 
 def load_preprocessed_counters(city_name, mode):
-    counts = pd.read_parquet(data_dir / mode / city_name / "input" / f"all_counters.parquet")
+    counts = pd.read_parquet(data_dir / "traffic" / city_name / f"all_counters_{mode}.parquet")
     print(counts.shape)
     return counts
 
