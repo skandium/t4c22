@@ -43,6 +43,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     city_name = args.city_name
 
+    (data_dir / "traffic" / city_name).mkdir(parents=True, exist_ok=True)
+
     counters = load_counters(city_name, "train")
     counters = calculate_volume_features(counters, aggregators=engineered_volume_features, nan_to_zero=True)
     del counters["volumes_1h"]
