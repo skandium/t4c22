@@ -206,3 +206,75 @@ def proba_to_logit(p):
 def get_weights_from_class_fractions(class_fractions):
     n = np.sum(class_fractions)
     return [n / (c * 3) for c in class_fractions]
+
+def load_supersegments(city_name, node_coordinates, del_segment_feats=True):
+    supersegments = pd.read_parquet(data_dir / f"road_graph/{city_name}/road_graph_supersegments.parquet")
+    supersegments["supersegment_id"] = list(range(len(supersegments)))
+    supersegment_to_id = supersegments.groupby("identifier")["supersegment_id"].first().to_dict()
+    id_to_supersegment = supersegments.groupby("supersegment_id")["identifier"].first().to_dict()
+
+    # Get representative point of supersegment
+    tqdm.pandas()
+
+    supersegments_full = supersegments.explode("nodes")
+    supersegments_full["coords"] = [(node_coordinates[n]["x"], node_coordinates[n]["y"]) for n in
+                                    supersegments_full["nodes"]]
+    supersegments["coord_list"] = \
+        supersegments_full.groupby("supersegment_id")["coords"].progress_apply(lambda x: x.tolist()).reset_index()[
+            "coords"]
+    del supersegments_full
+    supersegments["representative_point"] = supersegments["coord_list"].progress_apply(get_medoid)
+    supersegments["x"] = [r[0] for r in supersegments["representative_point"]]
+    supersegments["y"] = [r[1] for r in supersegments["representative_point"]]
+    if del_segment_feats:
+        del supersegments["nodes"]
+        del supersegments["coord_list"]
+        del supersegments["representative_point"]
+        del supersegments["identifier"]
+    return supersegments, supersegment_to_id, id_to_supersegment
+
+
+def create_multi_traffic_state(data, traffic_quantiles_list, feature="volumes_mean", mode="train"):
+    if mode == "train":
+        grouper = ["day", "t"]
+    else:
+        grouper = ["test_idx"]
+
+    traffic_means = data.groupby(grouper)[feature].median().reset_index()
+    features_quantiles = []
+
+    for i, traffic_quantiles in enumerate(traffic_quantiles_list):
+        curr_quantile_feature = f"quantile_{i}"
+        features_quantiles.append(curr_quantile_feature)
+
+        traffic_means[curr_quantile_feature] = [(vol - traffic_quantiles).abs().argmin() for vol in
+                                                traffic_means[feature]]
+
+    traffic_means["total_traffic"] = traffic_means[feature]
+    del traffic_means[feature]
+    data = data.merge(traffic_means, on=grouper)
+
+    return data, features_quantiles
+
+
+def append_static_pred_relative_to_df(df_target, df_reference, input_quantile_field="quantile",
+                                      output_static_pred_field="static_pred"):
+    """ Append ETA static_preds to df_target based on df_reference quantile valus
+
+    :param df_target: df that will get the static_pred ETAs appended
+    :param df_reference: df that will be used for computing the quantile-based supersegment ETAs
+    :returns: doesn't return anything, it just changes its first argument
+    """
+
+    eta_dummy_fallback = df_reference["eta"].median()
+    eta_dict_fallback = df_reference.groupby(['supersegment_id'])["eta"].median().to_dict()
+    eta_dict = df_reference.groupby(['supersegment_id', input_quantile_field])["eta"].median().to_dict()
+    eta_dict_counts = df_reference.groupby(['supersegment_id', input_quantile_field])["eta"].count().to_dict()
+
+    df_target[output_static_pred_field] = [
+        eta_dict.get((s, q), eta_dict_fallback.get(s, eta_dummy_fallback))
+        for s, q in zip(
+            df_target["supersegment_id"],
+            df_target[input_quantile_field]
+        )
+    ]
