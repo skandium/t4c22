@@ -14,7 +14,7 @@ pip install -r requirements.txt
 bash preprocess_all.sh melbourne
 ```
 
-An alternative to running this is unarchiving the `traffic.zip` file and moving the resulting `traffic` directory
+An alternative to running this and task specific preprocessing is unarchiving the `traffic.zip` file and moving  resulting `traffic` directory
 to `data_dir`.
 
 ## Core
@@ -38,12 +38,24 @@ specifically, `data_dir / "submissions" / model_name / city_name / "labels" / "c
 
 ## Extended
 
+Preprocessing:
+Run the notebook `extended_generate_supersegment_speed_feats.ipynb`
+Now run the notebook `extended_final.ipynb`.
+
 ### Making submissions
+
+To only generate a submission from a trained model, run:
+
+```
+python extended_generate_submission.py -c melbourne -p model_path -m model_name
+```
 
 ## Artifacts
 
 We store the trained model artifacts together with submission parquet files in S3:
 
-- preprocessed [files]()
-- core [submissions](https://t4c22-data.s3.eu-central-1.amazonaws.com/submissions/core.zip),
+- preprocessed `traffic` [folder](https://t4c22-data.s3.eu-central-1.amazonaws.com/traffic.zip)
+- core [submissions](https://t4c22-data.s3.eu-central-1.amazonaws.com/submissions/core.zip)
 - core [models](https://t4c22-data.s3.eu-central-1.amazonaws.com/models/core.zip)
+- extended [submissions](https://t4c22-data.s3.eu-central-1.amazonaws.com/submissions/extended.zip)
+- extended [models](https://t4c22-data.s3.eu-central-1.amazonaws.com/models/extended.zip)
