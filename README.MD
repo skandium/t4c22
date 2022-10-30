@@ -42,14 +42,6 @@ Preprocessing:
 Run the notebook `extended_generate_supersegment_speed_feats.ipynb`
 Now run the notebook `extended_final.ipynb`.
 
-### Making submissions
-
-To only generate a submission from a trained model, run:
-
-```
-python extended_generate_submission.py -c melbourne -p model_path -m model_name
-```
-
 ## Artifacts
 
 We store the trained model artifacts together with submission parquet files in S3:
