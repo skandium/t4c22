@@ -214,16 +214,15 @@ def load_supersegments(city_name, node_coordinates, del_segment_feats=True):
     id_to_supersegment = supersegments.groupby("supersegment_id")["identifier"].first().to_dict()
 
     # Get representative point of supersegment
-    tqdm.pandas()
 
     supersegments_full = supersegments.explode("nodes")
     supersegments_full["coords"] = [(node_coordinates[n]["x"], node_coordinates[n]["y"]) for n in
                                     supersegments_full["nodes"]]
     supersegments["coord_list"] = \
-        supersegments_full.groupby("supersegment_id")["coords"].progress_apply(lambda x: x.tolist()).reset_index()[
+        supersegments_full.groupby("supersegment_id")["coords"].apply(lambda x: x.tolist()).reset_index()[
             "coords"]
     del supersegments_full
-    supersegments["representative_point"] = supersegments["coord_list"].progress_apply(get_medoid)
+    supersegments["representative_point"] = supersegments["coord_list"].apply(get_medoid)
     supersegments["x"] = [r[0] for r in supersegments["representative_point"]]
     supersegments["y"] = [r[1] for r in supersegments["representative_point"]]
     if del_segment_feats:
