@@ -4,7 +4,7 @@ Paper: [Large scale traffic forecasting with gradient boosting](https://arxiv.or
 
 Please refer to [competition homepage](https://www.iarai.ac.at/traffic4cast/) for downloading the data.
 
-This repo should roughly replicate the solution of the Bolt team. Code is (slightly) refactored compared to the messy
+This repo should roughly replicate the solution of the Bolt team (2nd place in core competition). Code is (slightly) refactored compared to the messy
 notebooks that were used during competition.
 
 Python version: any new-ish Python 3.8+ should work, we used 3.10.4
